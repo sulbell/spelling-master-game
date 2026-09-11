@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpellMaster - Spelling Adventure</title>
+    <style>
+        :root {
+            --bg: #071642;
+            --panel: #10255d;
+            --panel2: #132e70;
+            --text: #f8fbff;
+            --muted: #b9c8ee;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --blue: #38bdf8;
+            --green: #22c55e;
+            --yellow: #facc15;
+            --orange: #f97316;
+            --red: #fb7185;
+            --cyan: #22d3ee;
+            --shadow: 0 16px 45px #02081780;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: radial-gradient(circle at 10% 0%, #263d9a 0, transparent 32%), radial-gradient(circle at 100% 15%, #6d236c 0, transparent 30%), var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+        button {
+            cursor: pointer;
+            border: 0;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .app {
+            max-width: 1250px;
+            margin: auto;
+            padding: 18px;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 8px 4px 18px;
+            flex-wrap: wrap;
+        }
+        .logo {
+            font-size: 30px;
+            font-weight: 950;
+            letter-spacing: -1.5px;
+        }
+        .logo span {
+            color: #facc15;
+        }
+        .logo small {
+            display: block;
+            font-size: 11px;
+            color: #b8c7ef;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        .nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .nav button {
+            background: #ffffff0d;
+            color: #dbeafe;
+            padding: 10px 14px;
+            border-radius: 14px;
+        }
+        .nav button:hover {
+            background: #ffffff18;
+        }
+        .card {
+            background: linear-gradient(145deg, #132e70e8, #0d1e50e8);
+            border: 1px solid #ffffff1c;
+            border-radius: 22px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+        }
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .hero .card:first-child {
+            background: linear-gradient(135deg, #153b94, #472184);
+        }
+        .hero h1 {
+            font-size: clamp(26px, 4vw, 46px);
+            margin: 8px 0;
+        }
+        .hero p {
+            color: #d7e1ff;
+        }
+        .name-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        input,
+        select,
+        textarea {
+            background: #07183f;
+            color: #fff;
+            border: 1px solid #ffffff30;
+            border-radius: 14px;
+            padding: 13px 15px;
+            outline: none;
+            width: 100%;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px #60a5fa20;
+        }
+        .primary {
+            background: linear-gradient(90deg, #ec4899, #f59e0b);
+            color: #fff;
+            font-weight: 900;
+            padding: 13px 22px;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px #ec489944;
+            white-space: nowrap;
+        }
+        .secondary {
+            background: #ffffff12;
+            color: #fff;
+            padding: 11px 16px;
+            border-radius: 13px;
+            border: 1px solid #ffffff20;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            margin-top: 16px;
+        }
+        .stat {
+            text-align: center;
+            border-right: 1px solid #ffffff15;
+        }
+        .stat:last-child {
+            border: 0;
+        }
+        .stat b {
+            display: block;
+            font-size: 24px;
+            color: #facc15;
+        }
+        .stat span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 28px 3px 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .section-title h2 {
+            margin: 0;
+        }
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+        .mode {
+            min-height: 205px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: .2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .mode:hover {
+            transform: translateY(-4px);
+            border-color: #ffffff45;
+        }
+        .mode .num {
+            font-size: 14px;
+            font-weight: 900;
+            display: inline-flex;
+            width: 30px;
+            height: 30px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #ffffff20;
+        }
+        .mode h3 {
+            font-size: 20px;
+            margin: 10px 0 5px;
+        }
+        .mode p {
+            font-size: 13px;
+            color: #d4def8;
+            line-height: 1.45;
+        }
+        .mode .play {
+            align-self: flex-start;
+            padding: 9px 17px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 800;
+            background: #ffffff18;
+            border: 1px solid #ffffff25;
+        }
+        .purple {
+            background: linear-gradient(145deg, #5829a5, #26166a);
+        }
+        .green {
+            background: linear-gradient(145deg, #13764b, #0b3b39);
+        }
+        .orange {
+            background: linear-gradient(145deg, #a94b10, #5e2411);
+        }
+        .red {
+            background: linear-gradient(145deg, #a72c57, #54153f);
+        }
+        .cyan {
+            background: linear-gradient(145deg, #087b9d, #104d79);
+        }
+        .blue {
+            background: linear-gradient(145deg, #1551a1, #182b72);
+        }
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 16px;
+        }
+        .word-add {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .word-add input {
+            min-width: 0;
+            flex: 1;
+        }
+        .list {
+            max-height: 150px;
+            overflow: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .tag {
+            background: #ffffff12;
+            border: 1px solid #ffffff18;
+            padding: 6px 9px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        .small {
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .leader {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ffffff12;
+        }
+        .leader:last-child {
+            border: 0;
+        }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: #020617d9;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 20;
+        }
+        .modal {
+            width: min(720px, 100%);
+            max-height: 92vh;
+            overflow: auto;
+            background: linear-gradient(145deg, #172e73, #0b1740);
+            border: 1px solid #ffffff25;
+            border-radius: 26px;
+            box-shadow: 0 25px 80px #000b;
+            padding: 25px;
+        }
+        .modal h2 {
+            margin-top: 0;
+            font-size: 30px;
+        }
+        .game-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .pill {
+            background: #ffffff12;
+            border-radius: 99px;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+        .progress {
+            height: 9px;
+            background: #ffffff12;
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        .progress i {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, #22d3ee, #a78bfa, #f472b6);
+            width: 0;
+        }
+        .speaker {
+            font-size: 68px;
+            text-align: center;
+            margin: 20px;
+        }
+        .game-input {
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 2px;
+            width: 100%;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .feedback {
+            text-align: center;
+            min-height: 35px;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .correct {
+            color: #4ade80;
+        }
+        .wrong {
+            color: #fb7185;
+        }
+        .learn-word {
+            font-size: 48px;
+            text-align: center;
+            font-weight: 950;
+            color: #facc15;
+            margin: 25px;
+        }
+        .letters {
+            font-size: 22px;
+            letter-spacing: 8px;
+            text-align: center;
+            color: #a5b4fc;
+        }
+        .gap-word {
+            font-size: 38px;
+            text-align: center;
+            font-weight: 950;
+            letter-spacing: 5px;
+            margin: 28px;
+            color: #fb7185;
+        }
+        .hint {
+            text-align: center;
+            color: #fef3c7;
+            font-size: 16px;
+            background: #ffffff0a;
+            padding: 10px 16px;
+            border-radius: 14px;
+            margin: 8px 0;
+        }
+        .timer {
+            font-size: 44px;
+            font-weight: 950;
+            color: #facc15;
+            text-align: center;
+        }
+        .bar {
+            height: 15px;
+            background: #ffffff10;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .bar i {
+            height: 100%;
+            display: block;
+            background: #fb7185;
+            width: 100%;
+        }
+        .vs {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 12px;
+            align-items: center;
+        }
+        .playerbox {
+            padding: 18px;
+            border-radius: 18px;
+            background: #ffffff0b;
+            text-align: center;
+        }
+        .playerbox.active {
+            outline: 3px solid #facc15;
+        }
+        .playerbox h3 {
+            margin: 0 0 10px;
+        }
+        .vsmark {
+            font-size: 30px;
+            font-weight: 950;
+            color: #facc15;
+        }
+        .file {
+            display: none;
+        }
+        .toast {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            background: #0f255c;
+            border: 1px solid #ffffff22;
+            padding: 13px 16px;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            z-index: 50;
+            max-width: 90vw;
+        }
+        #confetti {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 60;
+            overflow: hidden;
+        }
+        .conf {
+            position: absolute;
+            width: 10px;
+            height: 16px;
+            animation: fall 2.8s linear forwards;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        footer {
+            text-align: center;
+            color: #8ea3d9;
+            padding: 28px 5px;
+            font-size: 12px;
+        }
+        .category-row {
+            display: flex;
+            gap: 10px;
+            margin: 12px 0 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .category-row select {
+            flex: 2;
+            min-width: 140px;
+        }
+        .category-row .secondary {
+            flex: 0 0 auto;
+        }
+        .mastery-badge {
+            display: inline-block;
+            font-size: 11px;
+            background: #ffffff15;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 6px;
+        }
+        .correct-word-reveal {
+            background: #fb718522;
+            border: 2px solid #fb7185;
+            border-radius: 16px;
+            padding: 16px 20px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .correct-word-reveal .big {
+            font-size: 44px;
+            font-weight: 950;
+            color: #facc15;
+            letter-spacing: 4px;
+        }
+        .correct-word-reveal .sub {
+            font-size: 14px;
+            color: #d4def8;
+            margin-top: 4px;
+        }
+        .mode-desc {
+            font-size: 13px;
+            color: #b9c8ee;
+            margin: 4px 0 12px;
+        }
+        .study-mode-setup {
+            background: #ffffff08;
+            border-radius: 16px;
+            padding: 18px;
+            margin: 15px 0;
+        }
+        .study-mode-setup textarea {
+            width: 100%;
+            min-height: 120px;
+            margin-bottom: 12px;
+        }
+        .voice-status {
+            font-size: 11px;
+            color: #4ade80;
+            text-align: center;
+            margin-top: 8px;
+        }
+        @media(max-width:900px) {
+            .mode-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+            .bottom-grid {
+                grid-template-columns: 1fr
+            }
+            .hero {
+                grid-template-columns: 1fr
+            }
+        }
+        @media(max-width:600px) {
+            .app {
+                padding: 10px
+            }
+            .nav button {
+                padding: 8px;
+                font-size: 12px
+            }
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px
+            }
+            .stat {
+                border: 0
+            }
+            .mode-grid {
+                grid-template-columns: 1fr
+            }
+            .hero .card {
+                padding: 18px
+            }
+            .modal {
+                padding: 18px
+            }
+            .learn-word {
+                font-size: 36px
+            }
+            .gap-word {
+                font-size: 29px
+            }
+            .game-input {
+                font-size: 20px
+            }
+            .vs {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .vsmark {
+                font-size: 20px;
+            }
+            .correct-word-reveal .big {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="confetti"></div>
+    <div class="app">
+        <header>
+            <div class="logo">Spell<span>Master</span><small>LEARN • SPELL • WIN</small></div>
+            <div class="nav"><button onclick="scrollToId('library')">📚 My Words</button><button onclick="scrollToId('scores')">🏆 High Scores</button><button onclick="showAbout()">ℹ️ How to Play</button></div>
+        </header>
+
+        <section class="hero">
+            <div class="card">
+                <div class="small">YOUR SPELLING ADVENTURE</div>
+                <h1 id="welcomeTitle">Welcome, Spelling Champion! 🌟</h1>
+                <p id="welcomeText">Enter your name, choose a mode and turn tricky words into trophies.</p>
+                <div class="name-row"><input id="nameInput" placeholder="Enter your name" maxlength="24"><button class="primary" onclick="startUser()">Let's Play!</button></div>
+                <div class="category-row">
+                    <select id="categorySelect">
+                        <option value="all">📚 All Words</option>
+                        <option value="days">📅 Days of the Week</option>
+                        <option value="months">📆 Months of the Year</option>
+                        <option value="school">🏫 School Items</option>
+                        <option value="home">🏠 Home Items</option>
+                        <option value="animals">🐘 Animals</option>
+                        <option value="food">🍕 Food</option>
+                        <option value="colors">🎨 Colors</option>
+                    </select>
+                    <button class="secondary" onclick="applyCategoryFilter()">Filter Words</button>
+                </div>
+            </div>
+            <div class="card">
+                <h2>"Every word you master makes the next one easier."</h2>
+                <p>Listen carefully, think about the sounds and patterns, then spell with confidence. Mistakes are part of learning.</p>
+                <button class="secondary" onclick="openGame('learn')">Start a quick lesson →</button>
+            </div>
+        </section>
+
+        <div class="card stats">
+            <div class="stat"><b id="best">0</b><span>BEST SCORE</span></div>
+            <div class="stat"><b id="played">0</b><span>GAMES PLAYED</span></div>
+            <div class="stat"><b id="learned">0</b><span>WORDS IN LIBRARY</span></div>
+            <div class="stat"><b id="streak">0</b><span>BEST STREAK</span></div>
+        </div>
+
+        <div class="section-title"><h2>Choose Your Game Mode</h2><span class="small">Built for middle-school learners</span></div>
+        <div class="mode-grid">
+            <div class="card mode purple"><div><span class="num">1</span><h3>Challenge</h3><p>Hear a word only. Type the spelling. 10 words per stage, with replay.</p></div><button class="play" onclick="openGame('challenge')">Play ▶</button></div>
+            <div class="card mode green"><div><span class="num">2</span><h3>Learn Mode</h3><p>See 5 words, hear pronunciation and letter-by-letter spelling, then get tested.</p></div><button class="play" onclick="openGame('learn')">Learn ▶</button></div>
+            <div class="card mode orange"><div><span class="num">3</span><h3>Time Attack</h3><p>Challenge-mode spelling against a countdown. Correct answers earn more for speed.</p></div><button class="play" onclick="openGame('time')">Attack ▶</button></div>
+            <div class="card mode red"><div><span class="num">4</span><h3>Fill in the Gap</h3><p>Complete missing letters. Stages increase from 1 missing letter to 4+.</p></div><button class="play" onclick="openGame('gap')">Play ▶</button></div>
+            <div class="card mode cyan"><div><span class="num">5</span><h3>Versus</h3><p>Two players, one device. Take turns spelling the same style of words.</p></div><button class="play" onclick="openGame('versus')">Duel ⚔</button></div>
+            <div class="card mode blue"><div><span class="num">6</span><h3>Word Builder</h3><p>Rearrange your thinking: hear the word and use its letters to build the spelling.</p></div><button class="play" onclick="openGame('builder')">Build ▶</button></div>
+            <div class="card mode purple"><div><span class="num">7</span><h3>Daily Quest</h3><p>A short mixed challenge using words from your library. Great for daily practice.</p></div><button class="play" onclick="openGame('daily')">Quest ▶</button></div>
+            <div class="card mode blue"><div><span class="num">8</span><h3>Practice</h3><p>Unlimited mixed practice using every word currently loaded into the game.</p></div><button class="play" onclick="openGame('practice')">Practice ▶</button></div>
+            <div class="card mode orange" style="grid-column:span 2"><div><span class="num">9</span><h3>🏷️ Category Challenge</h3><p>Pick a word category and get challenged on words from that group. Master each category!</p></div><button class="play" onclick="openGame('category')">Pick Category ▶</button></div>
+            <div class="card mode green" style="grid-column:span 2"><div><span class="num">10</span><h3>📝 Custom Study Mode</h3><p>Enter your own list of words to learn, then get tested specifically on those words. Perfect for exam prep!</p></div><button class="play" onclick="openGame('custom')">Study Mode ▶</button></div>
+        </div>
+
+        <div class="bottom-grid" id="library">
+            <div class="card">
+                <h3>📚 My Word Library</h3><p class="small">Preloaded words are available across all modes. Add your own words below.</p>
+                <div class="word-add"><input id="newWord" placeholder="e.g. magnificent"><button class="primary" onclick="addWord()">Add</button></div>
+                <div class="word-add"><input id="newHint" placeholder="Optional hint or meaning"><button class="secondary" onclick="addHintOnly()">Tip</button></div>
+                <div class="list" id="wordList"></div>
+                <p class="small" style="margin-top:8px">💡 Words you misspell will appear more often until you master them.</p>
+            </div>
+            <div class="card">
+                <h3>⬆️ Preload Your Own Words</h3>
+                <p class="small">Paste one word per line, or upload a .txt/.csv file. Optional hints can be added later in practice.</p>
+                <textarea id="bulkWords" rows="5" style="width:100%;background:#07183f;color:#fff;border:1px solid #ffffff25;border-radius:14px;padding:12px" placeholder="photosynthesis&#10;environment&#10;achievement"></textarea>
+                <div class="actions" style="justify-content:flex-start"><button class="primary" onclick="bulkAdd()">Add Words</button><label class="secondary">📁 Upload <input class="file" type="file" accept=".txt,.csv" onchange="uploadWords(event)"></label></div>
+            </div>
+            <div class="card" id="scores">
+                <h3>🏆 High Scores</h3><div id="leaders"></div><button class="secondary" onclick="clearScores()" style="margin-top:10px">Reset local scores</button>
+            </div>
+        </div>
+        <footer>SpellMaster is a local browser game. Progress is saved on this device. Word selection was informed by publicly available spelling resources from Vocabulary.com and Reading Rockets.</footer>
+    </div>
+
+    <div class="overlay hidden" id="overlay"><div class="modal" id="modal"></div></div>
+    <div class="toast hidden" id="toast"></div>
+
+    <script>
+        // ─── CATEGORIES ────────────────────────────────────────────────
+        const CATEGORIES = {
+            days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+            months: ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
+                'november', 'december'
+            ],
+            school: ['teacher', 'student', 'classroom', 'blackboard', 'homework', 'lesson', 'subject', 'mathematics',
+                'science', 'history', 'geography', 'english', 'library', 'principal', 'examination', 'notebook',
+                'pencil', 'textbook', 'laboratory', 'playground'
+            ],
+            home: ['kitchen', 'bedroom', 'bathroom', 'livingroom', 'diningroom', 'refrigerator', 'television',
+                'computer', 'telephone', 'furniture', 'curtain', 'lamp', 'mirror', 'carpet', 'pillow', 'blanket',
+                'sofa', 'table', 'chair', 'cupboard'
+            ],
+            animals: ['elephant', 'giraffe', 'crocodile', 'butterfly', 'dolphin', 'penguin', 'rhinoceros',
+                'hippopotamus', 'caterpillar', 'chameleon', 'kangaroo', 'koala', 'panther', 'leopard', 'gazelle',
+                'alligator', 'armadillo', 'buffalo', 'cheetah', 'chipmunk'
+            ],
+            food: ['pizza', 'spaghetti', 'sandwich', 'hamburger', 'chocolate', 'icecream', 'breakfast', 'dinner',
+                'vegetable', 'fruit', 'strawberry', 'blueberry', 'watermelon', 'pineapple', 'cucumber', 'broccoli',
+                'asparagus', 'cauliflower', 'raspberry', 'cantaloupe'
+            ],
+            colors: ['purple', 'orange', 'yellow', 'green', 'blue', 'red', 'pink', 'brown', 'black', 'white', 'silver',
+                'golden', 'violet', 'indigo', 'turquoise', 'magenta', 'crimson', 'scarlet', 'amber', 'jade'
+            ]
+        };
+
+        const CAT_HINTS = {
+            monday: 'first day of the work week',
+            tuesday: 'second day of the work week',
+            wednesday: 'middle of the work week',
+            thursday: 'fourth day of the work week',
+            friday: 'last day of the work week',
+            saturday: 'first day of the weekend',
+            sunday: 'last day of the weekend',
+            january: 'first month of the year',
+            february: 'shortest month',
+            march: 'third month, spring begins',
+            april: 'fourth month, spring showers',
+            may: 'fifth month, flowers bloom',
+            june: 'sixth month, summer starts',
+            july: 'seventh month, hot summer',
+            august: 'eighth month, late summer',
+            september: 'ninth month, fall begins',
+            october: 'tenth month, Halloween',
+            november: 'eleventh month, Thanksgiving',
+            december: 'twelfth month, Christmas',
+            teacher: 'helps students learn',
+            student: 'someone who learns at school',
+            classroom: 'where lessons happen',
+            blackboard: 'used for writing in class',
+            homework: 'schoolwork done at home',
+            lesson: 'a teaching session',
+            subject: 'a topic of study',
+            mathematics: 'the study of numbers',
+            science: 'study of the natural world',
+            history: 'study of the past',
+            geography: 'study of places and maps',
+            english: 'language of many countries',
+            library: 'place with many books',
+            principal: 'head of a school',
+            examination: 'a formal test',
+            kitchen: 'room for cooking',
+            bedroom: 'room for sleeping',
+            bathroom: 'room with a toilet and sink',
+            livingroom: 'room for relaxing',
+            diningroom: 'room for eating meals',
+            refrigerator: 'keeps food cold',
+            television: 'device for watching shows',
+            computer: 'device for digital tasks',
+            telephone: 'device for calls',
+            furniture: 'chairs, tables, etc.',
+            curtain: 'fabric over a window',
+            lamp: 'gives light',
+            mirror: 'reflects your image',
+            carpet: 'soft floor covering',
+            pillow: 'soft head rest for sleeping',
+            elephant: 'largest land animal',
+            giraffe: 'tallest animal with long neck',
+            crocodile: 'large reptile with many teeth',
+            butterfly: 'insect with colorful wings',
+            dolphin: 'intelligent sea mammal',
+            penguin: 'flightless bird that swims',
+            rhinoceros: 'large animal with horn',
+            hippopotamus: 'large river animal',
+            caterpillar: 'insect larva that becomes a butterfly',
+            chameleon: 'lizard that changes color',
+            kangaroo: 'marsupial that jumps',
+            koala: 'tree-dwelling marsupial',
+            panther: 'large black cat',
+            leopard: 'spotted big cat',
+            gazelle: 'swift antelope',
+            pizza: 'Italian dish with cheese and toppings',
+            spaghetti: 'long pasta noodles',
+            sandwich: 'bread with filling inside',
+            hamburger: 'patty in a bun',
+            chocolate: 'sweet brown treat',
+            icecream: 'frozen dessert',
+            breakfast: 'first meal of the day',
+            dinner: 'main evening meal',
+            vegetable: 'plant food like carrots',
+            fruit: 'sweet plant food',
+            strawberry: 'red juicy berry',
+            blueberry: 'small blue berry',
+            watermelon: 'large green fruit with red inside',
+            pineapple: 'tropical fruit with spiky skin',
+            cucumber: 'green vegetable with seeds',
+            purple: 'color between red and blue',
+            orange: 'color of the fruit',
+            yellow: 'color of the sun',
+            green: 'color of leaves',
+            blue: 'color of the sky',
+            red: 'color of fire trucks',
+            pink: 'light red color',
+            brown: 'color of chocolate',
+            black: 'darkest color',
+            white: 'lightest color',
+            silver: 'color of coins',
+            golden: 'color of gold',
+            violet: 'purple-blue color',
+            indigo: 'deep blue color',
+            turquoise: 'blue-green color'
+        };
+
+        // ─── BASE WORDS + CATEGORY MERGE ─────────────────────────────
+        const BASE_WORDS = [
+            "about", "afraid", "afternoon", "against", "answer", "beautiful", "because", "believe", "between",
+            "building",
+            "captain", "caught", "country", "different", "discover", "during", "enough", "example", "except",
+            "exercise",
+            "favorite", "finally", "future", "important", "interest", "language", "library", "minute", "mountain",
+            "necessary",
+            "ocean", "office", "opportunity", "principal", "probably", "problem", "receive", "remember", "sentence",
+            "several",
+            "special", "surprise", "through", "together", "tomorrow", "usually", "weather", "writing", "wrong",
+            "yesterday",
+            "achievement", "adventure", "alphabet", "argument", "attention", "calendar", "character", "community",
+            "confidence", "curious",
+            "dictionary", "education", "environment", "experience", "knowledge", "imagination", "independent",
+            "information", "interesting", "knowledgeable",
+            "magnificent", "pronunciation", "responsibility", "temperature", "understanding", "communication",
+            "competition", "concentration", "determination", "embarrassment",
+            "government", "guarantee", "immediately", "occasionally", "recommend", "restaurant", "separate",
+            "successful", "necessary", "privilege",
+            "accommodate", "apparent", "beginning", "business", "committee", "conscience", "definitely",
+            "discipline", "existence", "foreign",
+            "frequently", "government", "harass", "independent", "maintenance", "misspell", "occurrence",
+            "possession", "questionnaire", "rhythm",
+            "science", "tomorrow", "vacuum", "weird", "accommodate", "calendar", "category", "colleague",
+            "convenient", "exaggerate",
+            "explanation", "familiar", "grateful", "identity", "knowledge", "leisure", "lightning", "occasion",
+            "persuade", "relevant",
+            "similar", "sincerely", "technique", "thorough", "vehicle", "volunteer", "Wednesday", "whether",
+            "withdraw", "witness",
+            "ability", "animal", "another", "balance", "challenge", "children", "complete", "dangerous", "decide",
+            "describe",
+            "develop", "energy", "especially", "excellent", "famous", "friend", "grammar", "hospital", "improve",
+            "journey",
+            "middle", "natural", "opposite", "picture", "popular", "prepare", "reason", "research", "schedule",
+            "student"
+        ];
+
+        const HINTS = {
+            "beautiful": "pleasing to look at",
+            "because": "gives a reason",
+            "calendar": "shows days and months",
+            "environment": "the natural world around us",
+            "opportunity": "a favourable chance",
+            "principal": "a school leader",
+            "receive": "to get something",
+            "separate": "to keep apart",
+            "necessary": "needed or required",
+            "rhythm": "a repeated pattern of sound",
+            "accommodate": "to provide room for",
+            "embarrassment": "a feeling of self-consciousness",
+            "knowledge": "what you know",
+            "pronunciation": "the way a word is spoken",
+            "temperature": "how hot or cold something is",
+            "responsibility": "a duty or task",
+            "communication": "sharing information",
+            "competition": "a contest",
+            "concentration": "focused attention",
+            "determination": "firmness in pursuing a goal",
+            "misspell": "spell a word incorrectly",
+            "questionnaire": "a set of questions",
+            "maintenance": "work needed to keep something working",
+            "vacuum": "a space with little or no matter",
+            "achievement": "something accomplished",
+            "adventure": "an exciting experience",
+            "alphabet": "letters from A to Z",
+            "argument": "a disagreement",
+            "attention": "focus or notice",
+            "character": "a person in a story",
+            "community": "a group of people",
+            "confidence": "belief in yourself",
+            "curious": "wanting to know more",
+            "dictionary": "book of word definitions",
+            "education": "learning and teaching",
+            "experience": "something you have done",
+            "imagination": "the ability to create ideas",
+            "independent": "able to do things on your own",
+            "information": "facts and knowledge",
+            "interesting": "catching your attention",
+            "knowledgeable": "having a lot of knowledge",
+            "magnificent": "very impressive",
+            "responsibility": "a duty to do something",
+            "understanding": "knowing what something means",
+            "government": "the ruling body of a country",
+            "guarantee": "a promise",
+            "immediately": "right away",
+            "occasionally": "sometimes",
+            "recommend": "suggest as good",
+            "restaurant": "place to eat out",
+            "successful": "having achieved success",
+            "privilege": "a special right",
+            "beginning": "the start",
+            "business": "commercial activity",
+            "committee": "a group of people",
+            "conscience": "inner sense of right and wrong",
+            "definitely": "without doubt",
+            "discipline": "self-control",
+            "existence": "the state of being",
+            "foreign": "from another country",
+            "frequently": "often",
+            "harass": "to bother repeatedly",
+            "maintenance": "keeping things in good condition",
+            "occurrence": "something that happens",
+            "possession": "something you own",
+            "science": "study of the natural world",
+            "tomorrow": "the day after today",
+            "weird": "strange or unusual",
+            "category": "a group or class",
+            "colleague": "a work associate",
+            "convenient": "easy and useful",
+            "exaggerate": "make something seem larger",
+            "explanation": "making something clear",
+            "familiar": "well-known",
+            "grateful": "thankful",
+            "identity": "who someone is",
+            "leisure": "free time",
+            "lightning": "a flash of light in the sky",
+            "occasion": "a special event",
+            "persuade": "convince someone",
+            "relevant": "connected to the topic",
+            "similar": "almost the same",
+            "sincerely": "in an honest way",
+            "technique": "a way of doing something",
+            "thorough": "complete and careful",
+            "vehicle": "a means of transport",
+            "volunteer": "someone who helps freely",
+            "Wednesday": "the middle of the week",
+            "whether": "if or not",
+            "withdraw": "take back or remove",
+            "witness": "someone who sees something",
+            "ability": "the power to do something",
+            "balance": "to keep steady",
+            "challenge": "a difficult task",
+            "complete": "to finish",
+            "dangerous": "not safe",
+            "decide": "to make a choice",
+            "describe": "to tell about something",
+            "develop": "to grow or improve",
+            "energy": "power to do work",
+            "especially": "particularly",
+            "excellent": "very good",
+            "famous": "well-known",
+            "friend": "a close companion",
+            "grammar": "rules of language",
+            "hospital": "place for sick people",
+            "improve": "make better",
+            "journey": "a trip",
+            "middle": "the center",
+            "natural": "not made by humans",
+            "opposite": "completely different",
+            "picture": "a visual representation",
+            "popular": "liked by many",
+            "prepare": "to get ready",
+            "reason": "a cause or explanation",
+            "research": "careful study",
+            "schedule": "a plan of times"
+        };
+
+        // Merge category hints into HINTS
+        for (const [k, v] of Object.entries(CAT_HINTS)) { if (!HINTS[k]) HINTS[k] = v; }
+
+        // ─── MASTERY TRACKING ─────────────────────────────────────────
+        let mastery = JSON.parse(localStorage.getItem("spellmaster_mastery") || "{}");
+
+        function saveMastery() { localStorage.setItem("spellmaster_mastery", JSON.stringify(mastery)); }
+
+        function getMastery(word) {
+            if (!mastery[word]) mastery[word] = { correct: 0, incorrect: 0, seen: 0, score: 50 };
+            return mastery[word];
+        }
+
+        function updateMastery(word, correct) {
+            const m = getMastery(word);
+            m.seen++;
+            if (correct) { m.correct++;
+                m.score = Math.min(100, m.score + 8); } else { m.incorrect++;
+                m.score = Math.max(0, m.score - 15); }
+            saveMastery();
+        }
+
+        function getMasteryLevel(word) {
+            const m = getMastery(word);
+            return m.score;
+        }
+
+        // ─── STORE ─────────────────────────────────────────────────────
+        let store = JSON.parse(localStorage.getItem("spellmaster") || "{}");
+        // Merge base words with category words
+        let allBase = [...BASE_WORDS];
+        for (const cat of Object.values(CATEGORIES)) { for (const w of cat) { if (!allBase.includes(w)) allBase.push(w); } }
+        store.words = Array.isArray(store.words) && store.words.length ? store.words : allBase;
+        store.scores = Array.isArray(store.scores) ? store.scores : [];
+        store.user = store.user || "";
+        store.played = store.played || 0;
+        store.best = store.best || 0;
+        store.streak = store.streak || 0;
+        store.currentStreak = store.currentStreak || 0;
+        store.categoryFilter = store.categoryFilter || "all";
+
+        let state = { mode: null, words: [], idx: 0, score: 0, correct: 0, start: 0, stage: 1, timer: null, timeLeft: 60,
+            player: 1, p1: 0, p2: 0, used: [], current: "", total: 0, customWords: [], hintText: "" };
+
+        // ─── SAVE / RENDER ────────────────────────────────────────────
+        function save() { localStorage.setItem("spellmaster", JSON.stringify(store));
+            renderStats();
+            renderLibrary();
+            renderScores(); }
+
+        function renderStats() {
+            document.getElementById("best").textContent = store.best.toLocaleString();
+            document.getElementById("played").textContent = store.played;
+            document.getElementById("learned").textContent = store.words.length;
+            document.getElementById("streak").textContent = store.streak;
+        }
+
+        function renderLibrary() {
+            document.getElementById("wordList").innerHTML = store.words.slice().sort().map(w =>
+                `<span class="tag">${escapeHtml(w)} <span class="mastery-badge">${Math.round(getMasteryLevel(w))}%</span></span>`
+            ).join("");
+        }
+
+        function renderScores() {
+            let s = store.scores.slice().sort((a, b) => b.score - a.score).slice(0, 8);
+            document.getElementById("leaders").innerHTML = s.length ? s.map((x, i) =>
+                `<div class="leader"><span>${i+1}. ${escapeHtml(x.name)}</span><b>${x.score.toLocaleString()}</b></div>`
+            ).join('') : '<div class="small">No scores yet. Be the first!</div>';
+        }
+
+        function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;",
+                '"': "&quot;", "'": "&#039;" } [m])); }
+
+        function scrollToId(id) { document.getElementById(id).scrollIntoView({ behavior: "smooth" }); }
+
+        function startUser() {
+            let n = document.getElementById("nameInput").value.trim();
+            if (!n) { toast("Please enter your name first."); return; }
+            store.user = n;
+            save();
+            document.getElementById("welcomeTitle").textContent = `Welcome, ${n}! 🎉`;
+            document.getElementById("welcomeText").textContent = "Ready to turn tricky spellings into trophies? Pick a mode below.";
+            toast(`Good luck, ${n}!`);
+        }
+
+        function applyCategoryFilter() {
+            const sel = document.getElementById("categorySelect").value;
+            store.categoryFilter = sel;
+            save();
+            toast(`Filter set to: ${sel === 'all' ? 'All Words' : sel}`);
+            renderLibrary();
+        }
+
+        // ─── NIGERIAN VOICE ───────────────────────────────────────────
+        let nigerianVoice = null;
+        let voiceLoaded = false;
+
+        function getNigerianVoice() {
+            if (nigerianVoice) return nigerianVoice;
+            const voices = speechSynthesis.getVoices();
+            
+            // Try to find Nigerian English voice first
+            let v = voices.find(v => v.lang === 'en-NG' || v.lang === 'en_NG');
+            if (!v) v = voices.find(v => v.lang.includes('NG') || v.name.toLowerCase().includes('nigeria'));
+            
+            // Fallback to other African English accents
+            if (!v) v = voices.find(v => v.lang === 'en-ZA' || v.lang === 'en_KE' || v.lang === 'en_GH');
+            
+            // Final fallback to any English voice
+            if (!v) v = voices.find(v => v.lang.startsWith('en') && !v.lang.startsWith('en-US') && !v.lang.startsWith('en-GB'));
+            if (!v) v = voices.find(v => v.lang.startsWith('en'));
+            
+            nigerianVoice = v;
+            if (v && !voiceLoaded) {
+                voiceLoaded = true;
+                console.log('Using voice:', v.name, v.lang);
+            }
+            return v;
+        }
+
+        // Preload voices
+        if (speechSynthesis.getVoices().length === 0) {
+            speechSynthesis.onvoiceschanged = () => { getNigerianVoice(); };
+        } else { getNigerianVoice(); }
+
+        function speak(text, spell = false, rate = null, pitch = null) {
+            if (!("speechSynthesis" in window)) { toast("Speech is not available in this browser."); return; }
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(spell ? text.split("").join(" ") : text);
+            const voice = getNigerianVoice();
+            if (voice) u.voice = voice;
+            u.lang = voice ? voice.lang : 'en-NG';
+            u.rate = rate !== null ? rate : (spell ? 0.60 : 0.75);
+            u.pitch = pitch !== null ? pitch : 0.95;
+            u.volume = 1.0;
+            speechSynthesis.speak(u);
+        }
+
+        function speakLoudly(text, isCorrect) {
+            if (!("speechSynthesis" in window)) return;
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            const voice = getNigerianVoice();
+            if (voice) u.voice = voice;
+            u.lang = voice ? voice.lang : 'en-NG';
+            u.rate = 0.85;
+            u.pitch = isCorrect ? 1.15 : 0.85;
+            u.volume = 1.0;
+            speechSynthesis.speak(u);
+        }
+
+        // ─── WORD SELECTION with MASTERY ─────────────────────────────
+        function getFilteredWords(category = null) {
+            let pool = store.words;
+            if (category && category !== 'all' && CATEGORIES[category]) {
+                const catWords = CATEGORIES[category];
+                pool = pool.filter(w => catWords.includes(w));
+                if (pool.length === 0) pool = catWords;
+            } else if (store.categoryFilter && store.categoryFilter !== 'all' && CATEGORIES[store.categoryFilter]) {
+                const catWords = CATEGORIES[store.categoryFilter];
+                pool = pool.filter(w => catWords.includes(w));
+                if (pool.length === 0) pool = catWords;
+            }
+            return pool;
+        }
+
+        function randomWordsWithMastery(n, category = null, filter = () => true) {
+            let pool = getFilteredWords(category).filter(filter);
+            if (pool.length === 0) pool = store.words.filter(filter);
+            if (pool.length === 0) pool = store.words;
+            // Score each word: lower mastery = higher priority
+            const scored = pool.map(w => ({ w, score: getMasteryLevel(w) }));
+            // Sort: lowest mastery first, but add some randomness
+            scored.sort((a, b) => a.score - b.score + (Math.random() * 10 - 5));
+            // Take top n, but shuffle a bit
+            let selected = scored.slice(0, Math.min(n * 2, scored.length)).map(x => x.w);
+            selected = shuffle(selected).slice(0, n);
+            while (selected.length < n) {
+                const extra = shuffle(pool).filter(w => !selected.includes(w));
+                selected.push(extra[0] || shuffle(store.words)[0]);
+            }
+            return selected.slice(0, n);
+        }
+
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+
+        function stageFilter(stage) {
+            if (stage === 1) return w => w.length >= 4 && w.length <= 5;
+            if (stage === 2) return w => w.length >= 6 && w.length <= 7;
+            if (stage === 3) return w => w.length >= 8 && w.length <= 9;
+            if (stage === 4) return w => w.length > 9;
+            return () => true;
+        }
+
+        // ─── MODAL HELPERS ────────────────────────────────────────────
+        function showModal(content) { document.getElementById("modal").innerHTML = content;
+            document.getElementById("overlay").classList.remove("hidden"); }
+
+        function closeModal() { clearInterval(state.timer);
+            speechSynthesis.cancel();
+            document.getElementById("overlay").classList.add("hidden"); }
+
+        function header(title, sub = "") {
+            return `<div class="game-top"><div><h2>${title}</h2><div class="small">${sub}</div></div><button class="secondary" onclick="closeModal()">✕</button></div>`;
+        }
+
+        function gameProgress(total) {
+            return `<div class="progress"><i style="width:${Math.min(100,(state.idx/(total||1))*100)}%"></i></div>`;
+        }
+
+        function showHint(word) {
+            const h = HINTS[word] || CAT_HINTS[word] || state.hintText || "Think about the word's meaning and sound.";
+            return `<div class="hint">💡 ${escapeHtml(h)}</div>`;
+        }
+
+        function showCorrectReveal(word) {
+            return `<div class="correct-word-reveal"><div class="big">${escapeHtml(word)}</div><div class="sub">🔊 The correct spelling is <strong>${escapeHtml(word)}</strong></div></div>`;
+        }
+
+        function typingInput(placeholder = "Type the spelling...") {
+            return `<div style="max-width:480px;margin:18px auto"><input id="answer" class="game-input" autocomplete="off" autocapitalize="none" placeholder="${placeholder}"></div>`;
+        }
+
+        function bindEnter(handler) {
+            setTimeout(() => {
+                const el = document.getElementById("answer");
+                if (el) el.onkeydown = e => { if (e.key === "Enter") handler(); };
+            }, 50);
+        }
+
+        function focusInput() {
+            setTimeout(() => { const el = document.getElementById("answer"); if (el) el.focus(); }, 60);
+        }
+
+        // ─── GAME MODES ───────────────────────────────────────────────
+        function openGame(mode) {
+            if (!store.user && mode !== 'custom') { toast("Enter your name before starting a game.");
+                document.getElementById("nameInput").focus(); return; }
+            state = { ...state, mode, idx: 0, score: 0, correct: 0, start: 0, stage: 1, used: [], player: 1, p1: 0, p2: 0,
+                total: 0, customWords: [], hintText: "" };
+            if (mode === "challenge") showChallenge();
+            else if (mode === "learn") showLearn();
+            else if (mode === "time") showTime();
+            else if (mode === "gap") showGap();
+            else if (mode === "versus") showVersusSetup();
+            else if (mode === "builder") showBuilder();
+            else if (mode === "daily") showPractice(7, "Daily Quest");
+            else if (mode === "category") showCategorySetup();
+            else if (mode === "custom") showCustomStudySetup();
+            else showPractice(999, "Practice");
+        }
+
+        // ─── CUSTOM STUDY MODE ────────────────────────────────────────
+        function showCustomStudySetup() {
+            showModal(header("📝 Custom Study Mode", "Enter words you want to learn and get tested on them") +
+                `<div class="study-mode-setup">
+                    <p class="small" style="margin-bottom:12px">Enter the words you want to study (one per line). Optionally add hints after a colon (:).</p>
+                    <textarea id="customWordsInput" placeholder="photosynthesis: process plants use to make food&#10;environment&#10;achievement: something accomplished well"></textarea>
+                    <div class="actions">
+                        <button class="primary" onclick="startCustomStudy()">Start Study Session 🚀</button>
+                        <button class="secondary" onclick="closeModal()">Cancel</button>
+                    </div>
+                </div>
+                <p class="small" style="text-align:center;margin-top:15px">💡 Format: word:hint (hint is optional)</p>`
+            );
+        }
+
+        function startCustomStudy() {
+            const input = document.getElementById("customWordsInput").value.trim();
+            if (!input) { toast("Please enter at least one word."); return; }
+            
+            const lines = input.split('\n').filter(line => line.trim());
+            const words = [];
+            const customHints = {};
+            
+            lines.forEach(line => {
+                const parts = line.split(':');
+                const word = parts[0].trim().toLowerCase().replace(/[^a-z'-]/g, "");
+                if (word) {
+                    words.push(word);
+                    if (parts.length > 1 && parts[1].trim()) {
+                        customHints[word] = parts[1].trim();
+                    }
+                }
+            });
+            
+            if (words.length === 0) { toast("No valid words found."); return; }
+            
+            state.customWords = words;
+            state.customHints = customHints;
+            state.total = words.length;
+            state.idx = 0;
+            state.score = 0;
+            state.correct = 0;
+            
+            // Add custom hints to HINTS temporarily
+            for (const [word, hint] of Object.entries(customHints)) {
+                HINTS[word] = hint;
+            }
+            
+            toast(`Starting study session with ${words.length} word(s)!`);
+            renderCustomStudy();
+        }
+
+        function renderCustomStudy() {
+            const w = state.customWords[state.idx];
+            state.current = w;
+            state.start = performance.now();
+            state.hintText = state.customHints[w] || "";
+            
+            showModal(header("📝 Custom Study Mode", `Word ${state.idx+1} of ${state.total}`) +
+                gameProgress(state.total) +
+                `<div class="speaker">🔊</div>` +
+                showHint(w) +
+                `<div class="actions"><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}')">🔁 Replay word</button></div>` +
+                typingInput("Type the spelling") +
+                `<div class="feedback" id="feedback"></div><div class="actions"><button class="primary" onclick="checkCustomStudy()">Check ✓</button></div>`
+            );
+            speak(w);
+            bindEnter(checkCustomStudy);
+            focusInput();
+        }
+
+        function checkCustomStudy() {
+            const input = document.getElementById("answer").value.trim().toLowerCase();
+            const w = state.current;
+            const f = document.getElementById("feedback");
+            const time = (performance.now() - state.start) / 1000;
+            if (!input) return;
+            
+            const ok = input === w.toLowerCase();
+            updateMastery(w, ok);
+            
+            if (ok) {
+                const pts = Math.max(50, 500 - Math.round(time * 25));
+                state.score += pts;
+                state.correct++;
+                state.currentStreak++;
+                f.className = "feedback correct";
+                f.textContent = `✓ Correct! +${pts} points`;
+                speakLoudly("Correct!", true);
+            } else {
+                state.currentStreak = 0;
+                f.className = "feedback wrong";
+                f.innerHTML = `✗ Not quite. ` + showCorrectReveal(w);
+                speakLoudly("Wrong. The correct spelling is " + w.split('').join(' '), false);
+            }
+            
+            if (state.idx < state.total - 1) {
+                setTimeout(() => { state.idx++; renderCustomStudy(); }, 1500);
+            } else {
+                setTimeout(() => finishGame("Custom Study Mode", state.total), 1500);
+            }
+        }
+
+        // ─── CHALLENGE ────────────────────────────────────────────────
+        function showChallenge() {
+            const total = 10;
+            state.total = total;
+            state.words = randomWordsWithMastery(total, null, stageFilter(state.stage));
+            if (state.words.length < total) state.words = randomWordsWithMastery(total);
+            state.idx = 0;
+            renderChallenge();
+        }
+
+        function renderChallenge() {
+            const w = state.words[state.idx];
+            state.current = w;
+            state.start = performance.now();
+            showModal(header(`Challenge • Stage ${state.stage}`, `Word ${state.idx+1} of ${state.total} • ${state.correct} correct`) +
+                gameProgress(state.total) +
+                `<div class="speaker">🔊</div><p style="text-align:center;color:#dbeafe">Listen. The word will NOT be shown.</p>` +
+                showHint(w) +
+                `<div class="actions"><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}')">🔁 Replay word</button></div>` +
+                typingInput("Type the spelling") +
+                `<div class="feedback" id="feedback"></div><div class="actions"><button class="primary" onclick="checkChallenge()">Check ✓</button></div>`
+            );
+            speak(w);
+            bindEnter(checkChallenge);
+            focusInput();
+        }
+
+        function checkChallenge() {
+            const input = document.getElementById("answer").value.trim().toLowerCase();
+            const w = state.words[state.idx];
+            const f = document.getElementById("feedback");
+            const time = (performance.now() - state.start) / 1000;
+            if (!input) return;
+            const ok = input === w.toLowerCase();
+            updateMastery(w, ok);
+            if (ok) {
+                const pts = Math.max(50, 500 - Math.round(time * 25));
+                state.score += pts;
+                state.correct++;
+                state.currentStreak++;
+                f.className = "feedback correct";
+                f.textContent = `✓ Correct! +${pts} points`;
+                speakLoudly("Correct!", true);
+            } else {
+                state.currentStreak = 0;
+                f.className = "feedback wrong";
+                f.innerHTML = `✗ Not quite. ` + showCorrectReveal(w);
+                speakLoudly("Wrong. The correct spelling is " + w.split('').join(' '), false);
+            }
+            if (state.idx < state.total - 1) {
+                setTimeout(() => { state.idx++;
+                    renderChallenge(); }, 1500);
+            } else setTimeout(() => finishGame(`Challenge • Stage ${state.stage}`, state.total), 1500);
+        }
+
+        // ─── LEARN ─────────────────────────────────────────────────────
+        function showLearn() {
+            state.words = randomWordsWithMastery(5);
+            state.total = 5;
+            state.idx = 0;
+            renderLearn();
+        }
+
+        function renderLearn() {
+            const w = state.words[state.idx];
+            showModal(header("Learn Mode", `Word ${state.idx+1} of ${state.total} • Listen, see, say, spell`) +
+                gameProgress(state.total) +
+                `<div class="learn-word">${escapeHtml(w)}</div><div class="letters">${w.split("").join(" ")}</div>` +
+                showHint(w) +
+                `<div class="actions"><button class="primary" onclick="speak('${w.replace(/'/g,"\\'")}')">🔊 Pronounce</button><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}',true)">🔤 Spell it aloud</button></div>` +
+                `<div class="actions"><button class="secondary" onclick="if(state.idx>0){state.idx--;renderLearn()}">← Back</button><button class="primary" onclick="${state.idx<state.total-1?"state.idx++;renderLearn()":"startLearnTest()"}">${state.idx<state.total-1?"Next →":"Test me! 🚀"}</button></div>`
+            );
+            speak(w);
+        }
+
+        function startLearnTest() { state.idx = 0;
+            state.score = 0;
+            state.correct = 0;
+            state.words = shuffle(state.words);
+            state.total = state.words.length;
+            renderLearnTest(); }
+
+        function renderLearnTest() {
+            const w = state.words[state.idx];
+            state.current = w;
+            state.start = performance.now();
+            showModal(header("Learn Mode • Test", `Test ${state.idx+1} of ${state.total}`) +
+                gameProgress(state.total) +
+                `<div class="speaker">🔊</div><p style="text-align:center">Listen and type the word you just learned.</p>` +
+                showHint(w) +
+                `<div class="actions"><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}')">🔁 Replay</button></div>` +
+                typingInput("Your spelling") +
+                `<div class="feedback" id="feedback"></div><div class="actions"><button class="primary" onclick="checkLearn()">Check ✓</button></div>`
+            );
+            speak(w);
+            bindEnter(checkLearn);
+            focusInput();
+        }
+
+        function checkLearn() {
+            const w = state.words[state.idx];
+            const input = document.getElementById("answer").value.trim().toLowerCase();
+            const f = document.getElementById("feedback");
+            if (!input) return;
+            const ok = input === w.toLowerCase();
+            updateMastery(w, ok);
+            if (ok) { state.correct++;
+                state.score += 200;
+                f.className = "feedback correct";
+                f.textContent = "✓ Excellent memory!";
+                speakLoudly("Correct!", true); } else { state.currentStreak = 0;
+                f.className = "feedback wrong";
+                f.innerHTML = `✗ Not quite. ` + showCorrectReveal(w);
+                speakLoudly("Wrong. The correct spelling is " + w.split('').join(' '), false); }
+            if (state.idx < state.total - 1) setTimeout(() => { state.idx++;
+                renderLearnTest(); }, 1500);
+            else setTimeout(() => finishGame("Learn Mode", state.total), 1500);
+        }
+
+        // ─── TIME ATTACK ──────────────────────────────────────────────
+        function showTime() {
+            state.timeLeft = 60;
+            state.idx = 0;
+            state.correct = 0;
+            state.score = 0;
+            state.total = 100;
+            state.words = randomWordsWithMastery(100);
+            renderTime();
+            clearInterval(state.timer);
+            state.timer = setInterval(() => {
+                state.timeLeft--;
+                document.getElementById("timer").textContent = state.timeLeft;
+                if (state.timeLeft <= 0) finishGame("Time Attack", state.idx);
+            }, 1000);
+        }
+
+        function renderTime() {
+            const w = state.words[state.idx] || randomWordsWithMastery(1)[0];
+            state.current = w;
+            state.start = performance.now();
+            showModal(header("Time Attack", "60 seconds • Challenge-style listening") +
+                `<div class="timer" id="timer">${state.timeLeft}</div><div class="bar"><i id="timebar" style="width:${(state.timeLeft/60)*100}%"></i></div>` +
+                `<div class="speaker">⚡🔊</div>` + showHint(w) +
+                `<div class="actions"><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}')">🔁 Replay</button></div>` +
+                typingInput("Spell it!") +
+                `<div class="feedback" id="feedback"></div><div class="actions"><button class="primary" onclick="checkTime()">Submit ✓</button></div>`
+            );
+            speak(w);
+            bindEnter(checkTime);
+            focusInput();
+        }
+
+        function checkTime() {
+            const w = state.current;
+            const input = document.getElementById("answer").value.trim().toLowerCase();
+            const f = document.getElementById("feedback");
+            const time = (performance.now() - state.start) / 1000;
+            if (!input) return;
+            const ok = input === w.toLowerCase();
+            updateMastery(w, ok);
+            if (ok) {
+                const pts = Math.max(25, 300 - Math.round(time * 20));
+                state.score += pts;
+                state.correct++;
+                state.idx++;
+                state.currentStreak++;
+                f.className = "feedback correct";
+                f.textContent = `✓ +${pts}`;
+                speakLoudly("Correct!", true);
+                setTimeout(() => { if (state.timeLeft > 0) renderTime(); }, 400);
+            } else {
+                state.currentStreak = 0;
+                state.idx++;
+                f.className = "feedback wrong";
+                f.innerHTML = `✗ ` + showCorrectReveal(w);
+                speakLoudly("Wrong!", false);
+                setTimeout(() => { if (state.timeLeft > 0) renderTime(); }, 700);
+            }
+        }
+
+        // ─── GAP ──────────────────────────────────────────────────────
+        function showGap() {
+            state.total = 10;
+            state.words = randomWordsWithMastery(state.total);
+            state.idx = 0;
+            renderGap();
+        }
+
+        function makeGap(w, stage) {
+            let missing = stage === 1 ? 1 : stage === 2 ? 2 : stage === 3 ? 3 : Math.max(4, Math.floor(w.length * .45));
+            missing = Math.min(missing, w.length - 1);
+            let idx = shuffle([...Array(w.length).keys()]).slice(0, missing).sort((a, b) => a - b);
+            return { masked: w.split("").map((c, i) => idx.includes(i) ? "_" : c).join(" "), missing };
+        }
+
+        function renderGap() {
+            const w = state.words[state.idx];
+            state.current = w;
+            const g = makeGap(w, state.stage);
+            state.gap = g;
+            showModal(header(`Fill in the Gap • Stage ${state.stage}`, `Word ${state.idx+1} of ${state.total}`) +
+                gameProgress(state.total) +
+                `<div class="gap-word">${g.masked}</div>` + showHint(w) +
+                `<p class="small" style="text-align:center">Type the <strong>full word</strong> using the missing letters as clues.</p>` +
+                typingInput("Type the complete word") +
+                `<div class="feedback" id="feedback"></div><div class="actions"><button class="primary" onclick="checkGap()">Check ✓</button><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}')">🔊 Hear word</button></div>`
+            );
+            bindEnter(checkGap);
+            focusInput();
+        }
+
+        function checkGap() {
+            const w = state.current;
+            const input = document.getElementById("answer").value.trim().toLowerCase();
+            const f = document.getElementById("feedback");
+            if (!input) return;
+            const ok = input === w.toLowerCase();
+            updateMastery(w, ok);
+            if (ok) { state.score += 250;
+                state.correct++;
+                f.className = "feedback correct";
+                f.textContent = "✓ Perfect completion!";
+                speakLoudly("Correct!", true); } else { state.currentStreak = 0;
+                f.className = "feedback wrong";
+                f.innerHTML = `✗ ` + showCorrectReveal(w);
+                speakLoudly("Wrong. The correct spelling is " + w.split('').join(' '), false); }
+            if (state.idx < state.total - 1) setTimeout(() => { state.idx++;
+                renderGap(); }, 1500);
+            else setTimeout(() => finishGame(`Fill in the Gap • Stage ${state.stage}`, state.total), 1500);
+        }
+
+        // ─── VERSUS ────────────────────────────────────────────────────
+        function showVersusSetup() {
+            showModal(header("Versus Mode", "Two players • same device") +
+                `<div class="vs"><div class="playerbox"><h3>Player 1</h3><input id="p1name" placeholder="${escapeHtml(store.user||"Player 1")}"></div><div class="vsmark">VS</div><div class="playerbox"><h3>Player 2</h3><input id="p2name" placeholder="Player 2"></div></div><p class="small" style="margin-top:20px">Each player gets 5 turns. Both hear the word and type their spelling.</p><div class="actions"><button class="primary" onclick="startVersus()">Start Duel ⚔</button></div>`
+            );
+        }
+
+        function startVersus() {
+            state.p1 = 0;
+            state.p2 = 0;
+            state.idx = 0;
+            state.player = 1;
+            state.total = 10;
+            state.words = randomWordsWithMastery(state.total);
+            state.p1name = document.getElementById("p1name").value.trim() || store.user || "Player 1";
+            state.p2name = document.getElementById("p2name").value.trim() || "Player 2";
+            renderVersus();
+        }
+
+        function renderVersus() {
+            const w = state.words[state.idx];
+            const name = state.player === 1 ? state.p1name : state.p2name;
+            state.current = w;
+            showModal(header("Versus ⚔", `Turn ${state.idx+1} of ${state.total}`) +
+                `<div class="vs"><div class="playerbox ${state.player===1?"active":""}"><h3>${escapeHtml(state.p1name)}</h3><b>${state.p1}</b></div><div class="vsmark">VS</div><div class="playerbox ${state.player===2?"active":""}"><h3>${escapeHtml(state.p2name)}</h3><b>${state.p2}</b></div></div>` +
+                `<p style="text-align:center;margin:20px 0"><b>${escapeHtml(name)}</b>, listen and spell!</p>` +
+                showHint(w) +
+                `<div class="actions"><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}')">🔊 Replay</button></div>` +
+                typingInput("Type spelling") +
+                `<div class="feedback" id="feedback"></div><div class="actions"><button class="primary" onclick="checkVersus()">Submit ✓</button></div>`
+            );
+            speak(w);
+            bindEnter(checkVersus);
+            focusInput();
+        }
+
+        function checkVersus() {
+            const w = state.current;
+            const input = document.getElementById("answer").value.trim().toLowerCase();
+            const f = document.getElementById("feedback");
+            if (!input) return;
+            const ok = input === w.toLowerCase();
+            updateMastery(w, ok);
+            if (ok) { if (state.player === 1) state.p1 += 100;
+                else state.p2 += 100;
+                f.className = "feedback correct";
+                f.textContent = "✓ Point!";
+                speakLoudly("Correct!", true); } else { f.className = "feedback wrong";
+                f.innerHTML = `✗ ` + showCorrectReveal(w);
+                speakLoudly("Wrong!", false); }
+            if (state.idx < state.total - 1) setTimeout(() => { state.idx++;
+                state.player = state.player === 1 ? 2 : 1;
+                renderVersus(); }, 1500);
+            else setTimeout(finishVersus, 1500);
+        }
+
+        function finishVersus() {
+            clearInterval(state.timer);
+            const winner = state.p1 === state.p2 ? "It's a draw!" : state.p1 > state.p2 ? `${state.p1name} wins! 🏆` :
+                `${state.p2name} wins! 🏆`;
+            showModal(header("Duel Complete", winner) +
+                `<div class="vs" style="margin:30px 0"><div class="playerbox"><h3>${escapeHtml(state.p1name)}</h3><div style="font-size:40px">${state.p1}</div></div><div class="vsmark">—</div><div class="playerbox"><h3>${escapeHtml(state.p2name)}</h3><div style="font-size:40px">${state.p2}</div></div></div><div class="actions"><button class="primary" onclick="closeModal()">Back to games</button></div>`
+            );
+            if (state.p1 !== state.p2) celebrate();
+        }
+
+        // ─── BUILDER ──────────────────────────────────────────────────
+        function showBuilder() {
+            state.total = 5;
+            state.words = randomWordsWithMastery(state.total);
+            state.idx = 0;
+            renderBuilder();
+        }
+
+        function renderBuilder() {
+            const w = state.words[state.idx];
+            state.current = w;
+            const letters = shuffle(w.split(""));
+            showModal(header("Word Builder", `Round ${state.idx+1} of ${state.total} • Listen, then type the correct word`) +
+                gameProgress(state.total) +
+                `<div class="speaker">🧩🔊</div><div class="letters">${letters.map(x=>`<span class="tag">${x.toUpperCase()}</span>`).join(" ")}</div>` +
+                showHint(w) +
+                `<div class="actions"><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}')">Replay</button></div>` +
+                typingInput("Build the word") +
+                `<div class="feedback" id="feedback"></div><div class="actions"><button class="primary" onclick="checkBuilder()">Check ✓</button></div>`
+            );
+            speak(w);
+            bindEnter(checkBuilder);
+            focusInput();
+        }
+
+        function checkBuilder() {
+            const w = state.current;
+            const input = document.getElementById("answer").value.trim().toLowerCase();
+            const f = document.getElementById("feedback");
+            if (!input) return;
+            const ok = input === w.toLowerCase();
+            updateMastery(w, ok);
+            if (ok) { state.correct++;
+                state.score += 300;
+                f.className = "feedback correct";
+                f.textContent = "✓ Built correctly!";
+                speakLoudly("Correct!", true); } else { f.className = "feedback wrong";
+                f.innerHTML = `✗ ` + showCorrectReveal(w);
+                speakLoudly("Wrong. The correct spelling is " + w.split('').join(' '), false); }
+            if (state.idx < state.total - 1) setTimeout(() => { state.idx++;
+                renderBuilder(); }, 1500);
+            else setTimeout(() => finishGame("Word Builder", state.total), 1500);
+        }
+
+        // ─── PRACTICE / DAILY ─────────────────────────────────────────
+        function showPractice(total, title) {
+            state.total = Math.min(total, store.words.length);
+            state.words = randomWordsWithMastery(state.total);
+            state.idx = 0;
+            state.score = 0;
+            state.correct = 0;
+            state.practiceTitle = title;
+            renderPractice();
+        }
+
+        function renderPractice() {
+            const w = state.words[state.idx];
+            state.current = w;
+            showModal(header(state.practiceTitle, `Word ${state.idx+1} of ${state.total}`) +
+                gameProgress(state.total) +
+                `<div class="speaker">🔊</div>` + showHint(w) +
+                `<div class="actions"><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}')">Replay word</button></div>` +
+                typingInput("Spell it") +
+                `<div class="feedback" id="feedback"></div><div class="actions"><button class="primary" onclick="checkPractice()">Check ✓</button></div>`
+            );
+            speak(w);
+            bindEnter(checkPractice);
+            focusInput();
+        }
+
+        function checkPractice() {
+            const w = state.current;
+            const input = document.getElementById("answer").value.trim().toLowerCase();
+            const f = document.getElementById("feedback");
+            if (!input) return;
+            const ok = input === w.toLowerCase();
+            updateMastery(w, ok);
+            if (ok) { state.correct++;
+                state.score += 200;
+                f.className = "feedback correct";
+                f.textContent = "✓ Correct!";
+                speakLoudly("Correct!", true); } else { f.className = "feedback wrong";
+                f.innerHTML = `✗ ` + showCorrectReveal(w);
+                speakLoudly("Wrong. The correct spelling is " + w.split('').join(' '), false); }
+            if (state.idx < state.total - 1) setTimeout(() => { state.idx++;
+                renderPractice(); }, 1500);
+            else setTimeout(() => finishGame(state.practiceTitle, state.total), 1500);
+        }
+
+        // ─── CATEGORY CHALLENGE ──────────────────────────────────────
+        function showCategorySetup() {
+            let opts = Object.keys(CATEGORIES).map(k =>
+                `<option value="${k}">${k.charAt(0).toUpperCase()+k.slice(1)}</option>`).join('');
+            showModal(header("🏷️ Category Challenge", "Pick a category to focus on") +
+                `<div style="margin:20px 0"><select id="catPick" style="font-size:18px;padding:14px">${opts}</select></div>` +
+                `<div class="actions"><button class="primary" onclick="startCategory()">Start Challenge 🚀</button></div>`
+            );
+        }
+
+        function startCategory() {
+            const cat = document.getElementById("catPick").value;
+            if (!cat || !CATEGORIES[cat]) { toast("Please select a category."); return; }
+            state.total = 10;
+            state.words = randomWordsWithMastery(state.total, cat);
+            if (state.words.length < state.total) state.words = shuffle(CATEGORIES[cat]).slice(0, state.total);
+            state.idx = 0;
+            state.score = 0;
+            state.correct = 0;
+            state.practiceTitle = `Category: ${cat.charAt(0).toUpperCase()+cat.slice(1)}`;
+            renderCategoryChallenge();
+        }
+
+        function renderCategoryChallenge() {
+            const w = state.words[state.idx];
+            state.current = w;
+            showModal(header(state.practiceTitle, `Word ${state.idx+1} of ${state.total}`) +
+                gameProgress(state.total) +
+                `<div class="speaker">🔊</div>` + showHint(w) +
+                `<div class="actions"><button class="secondary" onclick="speak('${w.replace(/'/g,"\\'")}')">Replay word</button></div>` +
+                typingInput("Spell it") +
+                `<div class="feedback" id="feedback"></div><div class="actions"><button class="primary" onclick="checkCategory()">Check ✓</button></div>`
+            );
+            speak(w);
+            bindEnter(checkCategory);
+            focusInput();
+        }
+
+        function checkCategory() {
+            const w = state.current;
+            const input = document.getElementById("answer").value.trim().toLowerCase();
+            const f = document.getElementById("feedback");
+            if (!input) return;
+            const ok = input === w.toLowerCase();
+            updateMastery(w, ok);
+            if (ok) { state.correct++;
+                state.score += 200;
+                f.className = "feedback correct";
+                f.textContent = "✓ Correct!";
+                speakLoudly("Correct!", true); } else { f.className = "feedback wrong";
+                f.innerHTML = `✗ ` + showCorrectReveal(w);
+                speakLoudly("Wrong. The correct spelling is " + w.split('').join(' '), false); }
+            if (state.idx < state.total - 1) setTimeout(() => { state.idx++;
+                renderCategoryChallenge(); }, 1500);
+            else setTimeout(() => finishGame(state.practiceTitle, state.total), 1500);
+        }
+
+        // ─── FINISH GAME ──────────────────────────────────────────────
+        function finishGame(title, total) {
+            clearInterval(state.timer);
+            const perfect = state.correct === total;
+            const totalTime = Math.max(1, Math.round((state.start ? performance.now() - state.start : 1000) / 1000));
+            store.played++;
+            const old = store.best;
+            store.best = Math.max(store.best, state.score);
+            store.currentStreak = perfect ? store.currentStreak + 1 : 0;
+            store.streak = Math.max(store.streak, store.currentStreak);
+            store.scores.push({ name: store.user, score: state.score, mode: title, date: new Date().toLocaleDateString() });
+            store.scores = store.scores.slice(-40);
+            save();
+            if (perfect || state.score > old) celebrate();
+            showModal(header(perfect ? "Perfect Score! 🎉" : state.score > old ? "New High Score! 🏆" : "Round Complete!",
+                    title) +
+                `<div style="text-align:center"><div style="font-size:72px">${perfect?"🏆":"⭐"}</div><h2 style="margin:0">${state.score.toLocaleString()} points</h2><p class="small">${state.correct} / ${total} correct • ${Math.round(state.correct/total*100)}% accuracy</p>${perfect?'<p class="correct">You got every word right!</p>':''}</div>` +
+                `<div class="actions"><button class="primary" onclick="closeModal()">Back to games</button><button class="secondary" onclick="openGame('${state.mode}')">Play Again ↻</button></div>`
+            );
+        }
+
+        // ─── CELEBRATE ────────────────────────────────────────────────
+        function celebrate() {
+            const c = document.getElementById("confetti");
+            c.innerHTML = "";
+            for (let i = 0; i < 100; i++) {
+                const e = document.createElement("i");
+                e.className = "conf";
+                e.style.left = Math.random() * 100 + "%";
+                e.style.top = "-30px";
+                e.style.background = ["#facc15", "#ec4899", "#38bdf8", "#4ade80", "#a78bfa"][Math.floor(Math.random() *
+                5)];
+                e.style.transform = `rotate(${Math.random()*360}deg)`;
+                e.style.animationDelay = Math.random() * .7 + "s";
+                c.appendChild(e);
+            }
+            setTimeout(() => c.innerHTML = "", 3500);
+        }
+
+        // ─── WORD MANAGEMENT ──────────────────────────────────────────
+        function addWord() {
+            let w = document.getElementById("newWord").value.trim().toLowerCase().replace(/[^a-z'-]/g, "");
+            if (!w) { toast("Enter a word."); return; }
+            if (!store.words.includes(w)) store.words.push(w);
+            document.getElementById("newWord").value = "";
+            save();
+            toast("Word added to your library!");
+        }
+
+        function addHintOnly() { toast("Tip: add the word first; common hints are built into the game."); }
+
+        function bulkAdd() {
+            const words = document.getElementById("bulkWords").value.split(/[\n,;]+/).map(x => x.trim().toLowerCase().replace(
+                /[^a-z'-]/g, "")).filter(Boolean);
+            const before = store.words.length;
+            words.forEach(w => { if (!store.words.includes(w)) store.words.push(w); });
+            document.getElementById("bulkWords").value = "";
+            save();
+            toast(`${store.words.length-before} new word(s) added.`);
+        }
+
+        function uploadWords(e) {
+            const f = e.target.files[0];
+            if (!f) return;
+            const r = new FileReader();
+            r.onload = () => { document.getElementById("bulkWords").value = r.result;
+                bulkAdd(); };
+            r.readAsText(f);
+        }
+
+        function clearScores() { if (confirm("Clear local high scores?")) { store.scores = [];
+                save(); } }
+
+        // ─── ABOUT ─────────────────────────────────────────────────────
+        function showAbout() {
+            showModal(header("How to Play", "A quick guide") +
+                `<ol style="line-height:1.8;color:#dbeafe"><li>Enter your name to save your progress on this device.</li><li>In Challenge and Time Attack, listen to the word and type its spelling. The word itself is hidden.</li><li>Learn Mode shows five words and lets you hear both the pronunciation and the letters before testing you.</li><li>Fill in the Gap hides letters and gives you a meaning hint — type the full word.</li><li>Versus lets two players take turns on one device.</li><li>Scores reward correctness and speed. A perfect round or new high score triggers a celebration.</li><li>💡 <strong>Mastery System:</strong> Words you misspell will appear more often until you master them. Check the mastery % next to each word in your library.</li><li>🎯 Use the <strong>Category Challenge</strong> to focus on specific word groups like days, months, school items, and more.</li><li>📝 <strong>NEW: Custom Study Mode!</strong> Enter your own list of words to learn, then get tested specifically on those words. Perfect for exam preparation!</li><li>🔊 <strong>Nigerian Voice:</strong> All words are pronounced with a Nigerian English accent for authentic learning.</li><li>✅ <strong>Audio Feedback:</strong> You'll hear loud and clear whether your spelling is correct or wrong!</li></ol><div class="actions"><button class="primary" onclick="closeModal()">Got it!</button></div>`
+            );
+        }
+
+        function toast(msg) {
+            const t = document.getElementById("toast");
+            t.textContent = msg;
+            t.classList.remove("hidden");
+            clearTimeout(window._toast);
+            window._toast = setTimeout(() => t.classList.add("hidden"), 2500);
+        }
+
+        // ─── INIT ──────────────────────────────────────────────────────
+        document.getElementById("nameInput").value = store.user;
+        if (store.categoryFilter) document.getElementById("categorySelect").value = store.categoryFilter;
+        renderStats();
+        renderLibrary();
+        renderScores();
+        if (store.user) {
+            document.getElementById("welcomeTitle").textContent = `Welcome back, ${store.user}! 👋`;
+            document.getElementById("welcomeText").textContent = "Your spelling journey is waiting. Pick a mode and beat your best score.";
+        }
+
+        // Preload voices
+        if (speechSynthesis.getVoices().length === 0) {
+            speechSynthesis.onvoiceschanged = () => { getNigerianVoice(); };
+        } else { getNigerianVoice(); }
+    </script>
+</body>
+</html>
